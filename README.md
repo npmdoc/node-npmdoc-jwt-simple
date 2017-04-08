@@ -3,7 +3,7 @@
 
 [![NPM](https://nodei.co/npm/jwt-simple.png?downloads=true)](https://www.npmjs.com/package/jwt-simple)
 
-[![apidoc](https://npmdoc.github.io/node-npmdoc-jwt-simple/build/screenCapture.buildNpmdoc.browser.%2Fhome%2Ftravis%2Fbuild%2Fnpmdoc%2Fnode-npmdoc-jwt-simple%2Ftmp%2Fbuild%2Fapidoc.html.png)](https://npmdoc.github.io/node-npmdoc-jwt-simple/build/apidoc.html)
+[![apidoc](https://npmdoc.github.io/node-npmdoc-jwt-simple/build/screenCapture.buildNpmdoc.browser.%252Fhome%252Ftravis%252Fbuild%252Fnpmdoc%252Fnode-npmdoc-jwt-simple%252Ftmp%252Fbuild%252Fapidoc.html.png)](https://npmdoc.github.io/node-npmdoc-jwt-simple/build/apidoc.html)
 
 ![npmPackageListing](https://npmdoc.github.io/node-npmdoc-jwt-simple/build/screenCapture.npmPackageListing.svg)
 
