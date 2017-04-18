@@ -81,7 +81,41 @@
 
         <li>
 
+            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">jwt-simple.</span>jwt</span>
+
+        </li>
+
+        <li>
+
             <span class="apidocSignatureSpan">string <span class="apidocSignatureSpan">jwt-simple.</span>version</span>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.jwt-simple.jwt">module jwt-simple.jwt</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.jwt-simple.jwt.decode">
+            function <span class="apidocSignatureSpan">jwt-simple.jwt.</span>decode
+            <span class="apidocSignatureSpan">(token, key, noVerify, algorithm)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.jwt-simple.jwt.encode">
+            function <span class="apidocSignatureSpan">jwt-simple.jwt.</span>encode
+            <span class="apidocSignatureSpan">(payload, key, algorithm, options)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <span class="apidocSignatureSpan">string <span class="apidocSignatureSpan">jwt-simple.jwt.</span>version</span>
 
         </li>
 
@@ -170,6 +204,148 @@ console.log(decoded); //=&#x3e; { foo: &#x27;bar&#x27; }
     <h2>
         <a href="#apidoc.element.jwt-simple.encode" id="apidoc.element.jwt-simple.encode">
         function <span class="apidocSignatureSpan">jwt-simple.</span>encode
+        <span class="apidocSignatureSpan">(payload, key, algorithm, options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function jwt_encode(payload, key, algorithm, options) {
+  // Check key
+  if (!key) {
+    throw new Error(&#x27;Require key&#x27;);
+  }
+
+  // Check algorithm, default is HS256
+  if (!algorithm) {
+    algorithm = &#x27;HS256&#x27;;
+  }
+
+  var signingMethod = algorithmMap[algorithm];
+  var signingType = typeMap[algorithm];
+  if (!signingMethod || !signingType) {
+    throw new Error(&#x27;Algorithm not supported&#x27;);
+  }
+
+  // header, typ is fixed value.
+  var header = { typ: &#x27;JWT&#x27;, alg: algorithm };
+  if (options &#x26;&#x26; options.header) {
+    assignProperties(header, options.header);
+  }
+
+  // create segments, all segments should be base64 string
+  var segments = [];
+  segments.push(base64urlEncode(JSON.stringify(header)));
+  segments.push(base64urlEncode(JSON.stringify(payload)));
+  segments.push(sign(segments.join(&#x27;.&#x27;), key, signingMethod, signingType));
+
+  return segments.join(&#x27;.&#x27;);
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+var payload = { foo: &#x27;bar&#x27; };
+var secret = &#x27;xxx&#x27;;
+
+// HS256 secrets are typically 128-bit random strings, for example hex-encoded:
+// var secret = Buffer.from(&#x27;fe1a1915a379f3be5394b64d14794932&#x27;, &#x27;hex)
+
+// encode
+var token = jwt.<span class="apidocCodeKeywordSpan">encode</span>(payload, secret);
+
+// decode
+var decoded = jwt.decode(token, secret);
+console.log(decoded); //=&#x3e; { foo: &#x27;bar&#x27; }
+```
+
+### decode params
+...</pre></li>
+    </ul>
+
+
+
+
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.jwt-simple.jwt" id="apidoc.module.jwt-simple.jwt">module jwt-simple.jwt</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.jwt-simple.jwt.decode" id="apidoc.element.jwt-simple.jwt.decode">
+        function <span class="apidocSignatureSpan">jwt-simple.jwt.</span>decode
+        <span class="apidocSignatureSpan">(token, key, noVerify, algorithm)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function jwt_decode(token, key, noVerify, algorithm) {
+  // check token
+  if (!token) {
+    throw new Error(&#x27;No token supplied&#x27;);
+  }
+  // check segments
+  var segments = token.split(&#x27;.&#x27;);
+  if (segments.length !== 3) {
+    throw new Error(&#x27;Not enough or too many segments&#x27;);
+  }
+
+  // All segment should be base64
+  var headerSeg = segments[0];
+  var payloadSeg = segments[1];
+  var signatureSeg = segments[2];
+
+  // base64 decode and parse JSON
+  var header = JSON.parse(base64urlDecode(headerSeg));
+  var payload = JSON.parse(base64urlDecode(payloadSeg));
+
+  if (!noVerify) {
+    var signingMethod = algorithmMap[algorithm || header.alg];
+    var signingType = typeMap[algorithm || header.alg];
+    if (!signingMethod || !signingType) {
+      throw new Error(&#x27;Algorithm not supported&#x27;);
+    }
+
+    // verify signature. `sign` will return base64 string.
+    var signingInput = [headerSeg, payloadSeg].join(&#x27;.&#x27;);
+    if (!verify(signingInput, key, signingMethod, signingType, signatureSeg)) {
+      throw new Error(&#x27;Signature verification failed&#x27;);
+    }
+
+    // Support for nbf and exp claims.
+    // According to the RFC, they should be in seconds.
+    if (payload.nbf &#x26;&#x26; Date.now() &#x3c; payload.nbf*1000) {
+      throw new Error(&#x27;Token not yet active&#x27;);
+    }
+
+    if (payload.exp &#x26;&#x26; Date.now() &#x3e; payload.exp*1000) {
+      throw new Error(&#x27;Token expired&#x27;);
+    }
+  }
+
+  return payload;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+// HS256 secrets are typically 128-bit random strings, for example hex-encoded:
+// var secret = Buffer.from(&#x27;fe1a1915a379f3be5394b64d14794932&#x27;, &#x27;hex)
+
+// encode
+var token = jwt.encode(payload, secret);
+
+// decode
+var decoded = jwt.<span class="apidocCodeKeywordSpan">decode</span>(token, secret);
+console.log(decoded); //=&#x3e; { foo: &#x27;bar&#x27; }
+```
+
+### decode params
+
+```javascript
+/*
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.jwt-simple.jwt.encode" id="apidoc.element.jwt-simple.jwt.encode">
+        function <span class="apidocSignatureSpan">jwt-simple.jwt.</span>encode
         <span class="apidocSignatureSpan">(payload, key, algorithm, options)</span>
         </a>
     </h2>
