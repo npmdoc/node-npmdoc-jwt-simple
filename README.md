@@ -1,6 +1,6 @@
 # npmdoc-jwt-simple
 
-#### api documentation for  [jwt-simple (v0.5.1)](https://github.com/hokaccha/node-jwt-simple#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-jwt-simple.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-jwt-simple) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-jwt-simple.svg)](https://travis-ci.org/npmdoc/node-npmdoc-jwt-simple)
+#### basic api documentation for  [jwt-simple (v0.5.1)](https://github.com/hokaccha/node-jwt-simple#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-jwt-simple.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-jwt-simple) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-jwt-simple.svg)](https://travis-ci.org/npmdoc/node-npmdoc-jwt-simple)
 
 #### JWT(JSON Web Token) encode and decode module
 
@@ -65,7 +65,8 @@
     "scripts": {
         "test": "istanbul cover _mocha test/*.js"
     },
-    "version": "0.5.1"
+    "version": "0.5.1",
+    "bin": {}
 }
 ```
 
